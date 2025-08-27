@@ -1,0 +1,111 @@
+-- Create Database
+CREATE DATABASE DisasterManagement;
+USE DisasterManagement;
+
+-- USERS Table
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    phone_number VARCHAR(20),
+    password_hash VARCHAR(255) NOT NULL,
+    is_verified BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- COMMUNITY POSTS
+CREATE TABLE Community_Posts (
+    post_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    content TEXT NOT NULL,
+    location VARCHAR(150),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- POST COMMENTS
+CREATE TABLE Post_Comments (
+    comment_id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT,
+    user_id INT,
+    comment_text TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES Community_Posts(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- POST LIKES (composite PK)
+CREATE TABLE Post_Likes (
+    post_id INT,
+    user_id INT,
+    PRIMARY KEY (post_id, user_id),
+    FOREIGN KEY (post_id) REFERENCES Community_Posts(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- INCIDENTS
+CREATE TABLE Incidents (
+    incident_id INT AUTO_INCREMENT PRIMARY KEY,
+    reporter_id INT,
+    incident_type VARCHAR(100) NOT NULL,
+    location VARCHAR(150),
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reporter_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- MISSING PERSONS
+CREATE TABLE Missing_Persons (
+    report_id INT AUTO_INCREMENT PRIMARY KEY,
+    reporter_id INT,
+    full_name VARCHAR(150) NOT NULL,
+    age VARCHAR(10),
+    gender VARCHAR(20),
+    last_seen DATETIME,
+    last_known_location VARCHAR(200),
+    physical_description TEXT,
+    photo_url VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reporter_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- BARTER ITEMS
+CREATE TABLE Barter_Items (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    item_name VARCHAR(100) NOT NULL,
+    category VARCHAR(50),
+    description TEXT,
+    desired_item VARCHAR(100),
+    is_urgent BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- RESOURCES
+CREATE TABLE Resources (
+    resource_id INT AUTO_INCREMENT PRIMARY KEY,
+    resource_name VARCHAR(100) NOT NULL,
+    quantity_available INT,
+    status VARCHAR(50)
+);
+
+-- NGOS        
+CREATE TABLE NGOs (
+    ngo_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+    contact_info VARCHAR(150),
+    location VARCHAR(150)
+);
+
+-- NOTIFICATIONS
+CREATE TABLE Notifications (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    notification_type VARCHAR(50),
+    content TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
