@@ -86,7 +86,7 @@ CREATE TABLE Barter_Items (
 CREATE TABLE Resources (
     resource_id INT AUTO_INCREMENT PRIMARY KEY,
     resource_name VARCHAR(100) NOT NULL,
-    quantity_available INT,
+    quantity INT,
     status VARCHAR(50)
 );
 
